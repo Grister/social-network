@@ -4,4 +4,4 @@ from flask import Blueprint
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 # import blueprint's routes
-from . import routes
+from . import routes  # noqa

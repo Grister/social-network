@@ -1,20 +1,17 @@
-# from app import app
+from app import db
 from app.main import bp
 from flask import render_template
 
+from app.models import Post
 
-# register routes
+
 @bp.route("/")
 @bp.route("/index")
 def index():
-    # sample template context to render
-    context = {
-        "user": {"username": "Zakhar"},
-        "title": "Hillel"
-    }
-    return render_template("index.html", **context)
+    posts = db.session.query(Post).order_by(Post.created_at.desc()).all()
+    return render_template("index.html", posts=posts)
 
 
-@bp.route("/about")
+@bp.route('/about')
 def about():
     return render_template("about.html")
