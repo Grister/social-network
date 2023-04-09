@@ -3,5 +3,8 @@
 
 <!--override content block behaviour-->
 {% block content %}
-    {{ user.username }}
+    {{ current_user.username }}
+    {% for post in posts %}
+        {% include '_post.html' %}
+    {% endfor %}
 {% endblock %}
