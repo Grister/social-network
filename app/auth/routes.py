@@ -29,7 +29,7 @@ def login():
         login_user(user, remember=form.remember.data)
 
         # redirect to home page
-        return redirect(url_for("main.index"))
+        return redirect(url_for("user.profile", username=user.username))
 
     # render 'login.html' template with passed form
     return render_template("auth/login.html", form=form)
@@ -50,13 +50,18 @@ def register():
             flash(f"Email '{form.email.data}' already in use", category="error")
             return redirect(url_for("auth.register"))
 
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(username=form.username.data,
+                    email=form.email.data)
         user.set_password(form.password.data)
 
         db.session.add(user)
         db.session.commit()
 
-        profile = Profile(user_id=user.id)
+        profile = Profile(user_id=user.id,
+                          first_name=form.first_name.data,
+                          last_name=form.last_name.data,
+                          facebook=form.facebook.data,
+                          linkedin=form.linkedin.data)
         db.session.add(profile)
         db.session.commit()
 

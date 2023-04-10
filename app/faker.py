@@ -3,7 +3,7 @@ from flask import Blueprint
 from faker import Faker
 
 from app import db
-from app.models import User, Post
+from app.models import User, Post, Profile
 
 bp = Blueprint('fake', __name__)
 faker = Faker()
@@ -15,14 +15,14 @@ def users(num):
     """
     Create 'num' of fake users
     """
-    users = []
     for i in range(num):
-        # generate fake username
         username = faker.user_name()
-
-        # generate fake email
         email = faker.email()
+        password = faker.password(length=10)
 
+        first_name, last_name = faker.name().split()[:2]
+        facebook_url = f'https://www.facebook.com/{username}'
+        linkedin_url = f'https://www.linkedin.com/in/{username}'
         # get user by username & email
         user = (
             db.session.query(User)
@@ -34,14 +34,22 @@ def users(num):
 
         # no such user in db yet --> insert
         if not user:
-            user = User(
-                username=username,
-                email=email,
-            )
-            db.session.add(user)
-            users.append(user)
+            user = User(username=username,
+                        email=email)
 
-    # persist changes
+            user.set_password(password)
+            db.session.add(user)
+            db.session.commit()
+
+            profile = Profile(user_id=user.id,
+                              first_name=first_name,
+                              last_name=last_name,
+                              facebook=facebook_url,
+                              linkedin=linkedin_url)
+            db.session.add(profile)
+            db.session.commit()
+            db.session.add(user)
+
     db.session.commit()
     print(num, 'users added.')
 
