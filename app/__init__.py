@@ -47,6 +47,9 @@ def create_app():
     from .post import bp as post_bp
     app.register_blueprint(post_bp)
 
+    from .api import bp as api_bp
+    app.register_blueprint(api_bp)
+
     from . import models  # noqa
 
     @login_manager.user_loader
