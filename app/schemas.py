@@ -3,7 +3,7 @@ from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchemaOpts, SQLAlchemyAutoSchema
 
 from app import db
-from app.models import User, Profile
+from app.models import User, Profile, Post
 
 
 class BaseOpts(SQLAlchemyAutoSchemaOpts):
@@ -34,3 +34,9 @@ class UserSchema(BaseSchema):
         exclude = ('password',)
 
     profile = Nested(ProfileSchema(), many=False)
+
+
+class PostSchema(BaseSchema):
+    class Meta:
+        model = Post
+        # fields = ('id', 'author_id', 'title', 'content', 'created_at',)
