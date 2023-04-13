@@ -69,4 +69,3 @@ def unfollowing():
 
     return redirect(url_for('user.profile',
                             username=username))
-

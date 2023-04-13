@@ -4,7 +4,7 @@ from .forms import LoginForm, RegisterForm
 from flask_login import current_user, login_user, logout_user
 
 from .. import db
-from ..models import User, Profile
+from ..models import User
 from ..services import UserService
 
 user_service = UserService()

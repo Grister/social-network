@@ -40,11 +40,11 @@ class User(db.Model, UserMixin):
 
     # Відношення до таблиці "followers"
     user_followee = db.relationship('User',
-                                     secondary='followers',
-                                     primaryjoin=(Follower.follower_id == id),
-                                     secondaryjoin=(Follower.followed_id == id),
-                                     backref=db.backref('followers', lazy='dynamic'),
-                                     lazy='dynamic')
+                                    secondary='followers',
+                                    primaryjoin=(Follower.follower_id == id),
+                                    secondaryjoin=(Follower.followed_id == id),
+                                    backref=db.backref('followers', lazy='dynamic'),
+                                    lazy='dynamic')
 
     def avatar(self, size):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
