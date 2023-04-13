@@ -47,3 +47,26 @@ def profile(username):
         form.facebook.data = user.profile.facebook
         form.bio.data = user.profile.bio
     return render_template('user/profile.html', user=user, form=form)
+
+
+@bp.route('/follow')
+def following():
+    followed_id = request.args.get('user_id')
+    username = db.session.query(User).filter(User.id == followed_id).first_or_404().username
+    follower = db.session.query(User).filter(User.id == current_user.id).first_or_404()
+    follower.follow(followed_id)
+
+    return redirect(url_for('user.profile',
+                            username=username))
+
+
+@bp.route('/unfollow')
+def unfollowing():
+    followed_id = request.args.get('user_id')
+    username = db.session.query(User).filter(User.id == followed_id).first_or_404().username
+    follower = db.session.query(User).filter(User.id == current_user.id).first_or_404()
+    follower.unfollow(followed_id)
+
+    return redirect(url_for('user.profile',
+                            username=username))
+

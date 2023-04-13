@@ -12,9 +12,17 @@ class BaseModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
 
-class User(BaseModel, UserMixin):
+# Followers model
+class Follower(BaseModel):
+    __tablename__ = "followers"
+    follower_id = db.Column('follower_id', db.Integer, db.ForeignKey('user.id'))
+    followed_id = db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
+
+
+class User(db.Model, UserMixin):
     __tablename__ = "user"
 
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, index=True)
     email = db.Column(db.String, unique=True, index=True)
     password = db.Column(db.String, nullable=False)
@@ -29,6 +37,14 @@ class User(BaseModel, UserMixin):
     dislikes = db.relationship(
         'Dislike', backref='user', lazy='dynamic', primaryjoin='User.id==Dislike.user_id', cascade="all,delete"
     )
+
+    # Відношення до таблиці "followers"
+    user_followee = db.relationship('User',
+                                     secondary='followers',
+                                     primaryjoin=(Follower.follower_id == id),
+                                     secondaryjoin=(Follower.followed_id == id),
+                                     backref=db.backref('followers', lazy='dynamic'),
+                                     lazy='dynamic')
 
     def avatar(self, size):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
@@ -45,6 +61,21 @@ class User(BaseModel, UserMixin):
         Check user password hash with existing in db
         """
         return check_password_hash(self.password, password)
+
+    def follow(self, user_id):
+        if not self.is_following(user_id):
+            subscription = Follower(follower_id=self.id, followed_id=user_id)
+            db.session.add(subscription)
+            db.session.commit()
+
+    def unfollow(self, user_id):
+        subscription = Follower.query.filter_by(follower_id=self.id, followed_id=user_id).first()
+        if subscription:
+            db.session.delete(subscription)
+            db.session.commit()
+
+    def is_following(self, user_id):
+        return self.user_followee.filter_by(id=user_id).first() is not None
 
     def __repr__(self):
         return f"{self.username}({self.email})"

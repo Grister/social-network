@@ -11,6 +11,17 @@
                     <p class="text-muted">{{ user.email }}</p>
                 </div>
                  <p class="small">Last seen: {{ user.profile.last_seen.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                {% if not current_user==user %}
+                    {% if not current_user.is_following(user.id) %}
+                        <form action="{{ url_for('user.following') }}" method="get">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <button type="submit">Follow</button>
+                    {% else %}
+                        <form action="{{ url_for('user.unfollowing') }}" method="get">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <button type="submit">Unfollow</button>
+                    {% endif %}
+                {% endif %}
             </div>
             <div class="col-md-8">
                 {% if user == current_user %}
@@ -95,6 +106,30 @@
                         </div>
                     </div>
                 {% endif %}
+            </div>
+            <div class="col-md-4">
+                <div>
+                    <h5>Followers</h5>
+                    {% for follower in user.followers %}
+                        <p>
+                        <a href="{{ url_for('user.profile', username=follower.username) }}">
+                            {{ follower.username }}
+                        </a>
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div>
+                    <h5>Followee</h5>
+                    {% for followee in user.user_followee %}
+                        <p>
+                        <a href="{{ url_for('user.profile', username=followee.username) }}">
+                            {{ followee.username }}
+                        </a>
+                        </p>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
