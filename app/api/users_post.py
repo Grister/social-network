@@ -1,8 +1,6 @@
 from flask_restful import Resource
 from flask import jsonify, request
-from app import db
 from app.schemas import PostSchema
-from app.models import Post
 from app.services import UserPostService
 
 post_service = UserPostService()
@@ -38,4 +36,3 @@ class UserPostResource(Resource):
     def delete(self, user_id, post_id):
         status = post_service.delete(user_id=user_id, post_id=post_id)
         return jsonify(status=status)
-
