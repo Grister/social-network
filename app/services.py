@@ -76,3 +76,37 @@ class PostService:
         db.session.commit()
 
         return True
+
+
+class UserPostService:
+    def get_by_user_id(self, user_id):
+        posts = db.session.query(Post).filter(Post.author_id == user_id).all()
+        return posts
+
+    def get_by_post_id(self, post_id, user_id):
+        post = db.session.query(Post).filter(Post.author_id == user_id, Post.id == post_id).first_or_404()
+        return post
+
+    def create(self, data):
+        # Add the post to the database
+        post = Post(title=data.get('title'), content=data.get('content'), author_id=data.get('author_id'))
+        db.session.add(post)
+        db.session.commit()
+        return post
+
+    def update(self, data):
+        post = self.get_by_post_id(post_id=data['id'], user_id=data['author_id'])
+        data['id'] = post.id
+
+        post = PostSchema().load(data)
+        db.session.add(post)
+        db.session.commit()
+
+        return post
+
+    def delete(self, post_id, user_id):
+        post = self.get_by_post_id(post_id=post_id, user_id=user_id)
+        db.session.delete(post)
+        db.session.commit()
+
+        return True
