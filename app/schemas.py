@@ -3,7 +3,7 @@ from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchemaOpts, SQLAlchemyAutoSchema
 
 from app import db
-from app.models import User, Profile, Post
+from app.models import User, Profile, Post, Like, Dislike
 
 
 class BaseOpts(SQLAlchemyAutoSchemaOpts):
@@ -39,4 +39,13 @@ class UserSchema(BaseSchema):
 class PostSchema(BaseSchema):
     class Meta:
         model = Post
-        # fields = ('id', 'author_id', 'title', 'content', 'created_at',)
+
+
+class LikeSchema(BaseSchema):
+    class Meta:
+        model = Like
+
+
+class DislikeSchema(BaseSchema):
+    class Meta:
+        model = Dislike

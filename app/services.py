@@ -1,6 +1,6 @@
 from app import db
-from app.models import User, Profile, Post
-from app.schemas import UserSchema, PostSchema
+from app.models import User, Profile, Post, Like, Dislike
+from app.schemas import UserSchema, PostSchema, ProfileSchema, LikeSchema, DislikeSchema
 
 
 class UserService:
@@ -107,6 +107,107 @@ class UserPostService:
     def delete(self, post_id, user_id):
         post = self.get_by_post_id(post_id=post_id, user_id=user_id)
         db.session.delete(post)
+        db.session.commit()
+
+        return True
+
+
+class ProfileService:
+    def get_by_id(self, profile_id):
+        profile = db.session.query(Profile).filter(Profile.id == profile_id).first_or_404()
+        return profile
+
+    def update(self, data):
+        profile = self.get_by_id(data['id'])
+        data['id'] = profile.id
+        data['user_id'] = profile.user_id
+
+        profile = ProfileSchema().load(data)
+        db.session.add(profile)
+        db.session.commit()
+
+        return profile
+
+    def delete(self, profile_id):
+        profile = self.get_by_id(profile_id)
+
+        db.session.delete(profile)
+        db.session.commit()
+
+        return True
+
+    def create(self, data):
+        profile = Profile(bio=data.get('bio'),
+                          facebook=data.get('facebook'),
+                          first_name=data.get('first_name'),
+                          last_name=data.get('last_name'),
+                          id=data.get('id'),
+                          linkedin=data.get('linkedin'),
+                          user_id=data.get('user_id')
+                          )
+        db.session.add(profile)
+        db.session.commit()
+
+        return profile
+
+
+class LikeService:
+    def get_by_id(self, like_id):
+        like = db.session.query(Like).filter(Like.id == like_id).first_or_404()
+        return like
+
+    def create(self, data):
+        like = Like(id=data.get('id'), post_id=data.get('post_id'), user_id=data.get('user_id'))
+        db.session.add(like)
+        db.session.commit()
+
+        return like
+
+    def update(self, data):
+        like = self.get_by_id(data['id'])
+        data['id'] = like.id
+
+        like = LikeSchema().load(data)
+        db.session.add(like)
+        db.session.commit()
+
+        return like
+
+    def delete(self, like_id):
+        like = self.get_by_id(like_id)
+
+        db.session.delete(like)
+        db.session.commit()
+
+        return True
+
+
+class DislikeService:
+    def get_by_id(self, dislike_id):
+        dislike = db.session.query(Dislike).filter(Dislike.id == dislike_id).first_or_404()
+        return dislike
+
+    def create(self, data):
+        dislike = Dislike(id=data.get('id'), post_id=data.get('post_id'), user_id=data.get('user_id'))
+        db.session.add(dislike)
+        db.session.commit()
+
+        return dislike
+
+    def update(self, data):
+        dislike = self.get_by_id(data['id'])
+        data['id'] = dislike.id
+
+        dislike = DislikeSchema().load(data)
+        db.session.add(dislike)
+        db.session.commit()
+
+        return dislike
+
+    def delete(self, dislike_id):
+        dislike = self.get_by_id(dislike_id)
+
+        db.session.delete(dislike)
         db.session.commit()
 
         return True
