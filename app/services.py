@@ -12,7 +12,7 @@ class UserService:
         user = db.session.query(User).filter(User.username == username).first_or_404()
         return user
 
-    def create(self, data):
+    def create(self, **data):
         user = User(username=data.get('username'), email=data.get('email'))
         user.set_password(data.get('password'))
 
