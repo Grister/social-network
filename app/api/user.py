@@ -1,3 +1,4 @@
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask import jsonify, request
 from app import db
@@ -9,19 +10,23 @@ user_service = UserService()
 
 
 class UsersResource(Resource):
+    method_decorators = [jwt_required()]
+
     def get(self):
         users = db.session.query(User).all()
         return jsonify(UserSchema(exclude=('password',)).dump(users, many=True))
 
     def post(self):
         json_data = request.get_json()
-        user = user_service.create(json_data)
+        user = user_service.create(**json_data)
         response = jsonify(UserSchema(exclude=('password',)).dump(user, many=False))
         response.status_code = 201
         return response
 
 
 class UserResource(Resource):
+    method_decorators = [jwt_required()]
+
     def get(self, user_id=None):
         user = user_service.get_by_id(user_id)
         return jsonify(UserSchema().dump(user, many=False))

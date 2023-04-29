@@ -1,3 +1,4 @@
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from flask import jsonify, request
 from app import db
@@ -9,6 +10,7 @@ post_service = PostService()
 
 
 class PostsResource(Resource):
+    method_decorators = [jwt_required()]
     def get(self):
         posts = db.session.query(Post).all()
         return jsonify(PostSchema().dump(posts, many=True))
@@ -22,6 +24,8 @@ class PostsResource(Resource):
 
 
 class PostResource(Resource):
+    method_decorators = [jwt_required()]
+
     def get(self, post_id=None):
         post = post_service.get_by_id(post_id)
         return jsonify(PostSchema().dump(post, many=False))
