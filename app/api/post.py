@@ -11,6 +11,7 @@ post_service = PostService()
 
 class PostsResource(Resource):
     method_decorators = [jwt_required()]
+
     def get(self):
         posts = db.session.query(Post).all()
         return jsonify(PostSchema().dump(posts, many=True))
