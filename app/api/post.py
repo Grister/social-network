@@ -13,7 +13,12 @@ class PostsResource(Resource):
     method_decorators = [jwt_required()]
 
     def get(self):
-        posts = db.session.query(Post).all()
+        author_id = request.args.get('author_id', type=int)
+        query = db.session.query(Post)
+        if author_id:
+            query = query.filter(Post.author_id == author_id)
+
+        posts = query.all()
         return jsonify(PostSchema().dump(posts, many=True))
 
     def post(self):
