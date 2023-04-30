@@ -128,28 +128,6 @@ class ProfileService:
 
         return profile
 
-    def delete(self, profile_id):
-        profile = self.get_by_id(profile_id)
-
-        db.session.delete(profile)
-        db.session.commit()
-
-        return True
-
-    def create(self, data):
-        profile = Profile(bio=data.get('bio'),
-                          facebook=data.get('facebook'),
-                          first_name=data.get('first_name'),
-                          last_name=data.get('last_name'),
-                          id=data.get('id'),
-                          linkedin=data.get('linkedin'),
-                          user_id=data.get('user_id')
-                          )
-        db.session.add(profile)
-        db.session.commit()
-
-        return profile
-
 
 class LikeService:
     def get_by_id(self, like_id):
