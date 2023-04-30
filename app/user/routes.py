@@ -2,7 +2,7 @@ from app import db
 from app.models import Post, User
 from app.post.forms import PostForm
 from app.user import bp
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, abort
 from flask_login import current_user, login_required
 
 from app.user.forms import ProfileForm
@@ -51,9 +51,11 @@ def profile(username):
 
 @bp.route('/follow')
 def following():
-    followed_id = request.args.get('user_id')
-    username = db.session.query(User).filter(User.id == followed_id).first_or_404().username
-    follower = db.session.query(User).filter(User.id == current_user.id).first_or_404()
+    followed_id = request.args.get('user_id', type=int)
+    username = db.session.query(User.username).filter(User.id == followed_id).scalar()
+    follower = current_user
+    if not follower:
+        abort(404)
     follower.follow(followed_id)
 
     return redirect(url_for('user.profile',
@@ -62,9 +64,11 @@ def following():
 
 @bp.route('/unfollow')
 def unfollowing():
-    followed_id = request.args.get('user_id')
-    username = db.session.query(User).filter(User.id == followed_id).first_or_404().username
-    follower = db.session.query(User).filter(User.id == current_user.id).first_or_404()
+    followed_id = request.args.get('user_id', type=int)
+    username = db.session.query(User.username).filter(User.id == followed_id).scalar()
+    follower = current_user
+    if not follower:
+        abort(404)
     follower.unfollow(followed_id)
 
     return redirect(url_for('user.profile',
