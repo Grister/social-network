@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+
 from dotenv import load_dotenv
 
 
@@ -10,7 +12,7 @@ class Config:
     """
     Base configuration class
     """
-
+    BASE_DIR = Path(__file__).resolve().parent
     # read from .env file
     SECRET_KEY = os.getenv("SECRET_KEY")
     # SQLALCHEMY_DATABASE_URI = "sqlite:///network.db"

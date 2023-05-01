@@ -1,6 +1,9 @@
 from datetime import datetime
 from hashlib import md5
 
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import func
+
 from app import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -100,6 +103,14 @@ class Profile(BaseModel):
     linkedin = db.Column(db.String)
 
     user = db.relationship("User", backref=db.backref("profile", uselist=False), uselist=False)
+
+    @hybrid_property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+    @full_name.expression
+    def full_name(cls):
+        return func.concat_ws(' ', cls.first_name, cls.last_name)
 
 
 class Post(BaseModel):
