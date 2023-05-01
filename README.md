@@ -67,5 +67,17 @@ flask db downgrade
 Generate `n` fake users
 ```
 cd social-network
-flask fake users 5
+flask fake users <int:num>
+```
+
+Create a csv file with a list of all registered users
+```
+cd social-network
+flask user exctract_users
+```
+
+Create a csv file with a list of all users post by user_id
+```
+cd social-network
+flask post exctract_posts <int:user_id>
 ```
